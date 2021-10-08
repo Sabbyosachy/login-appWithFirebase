@@ -1,14 +1,16 @@
 
 import './App.css';
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, signInWithPopup,createUserWithEmailAndPassword, GoogleAuthProvider } from "firebase/auth";
 import initializeAuthentication from './Firebse/InitializeFirebase';
+import { useState } from 'react';
 
 initializeAuthentication();
 const googleprovider = new GoogleAuthProvider();
 function App() {
-
-  const handlegooglesignin=()=>{
-    const auth = getAuth();
+  const [email,setEmail]=useState('');
+  const [pass,setPass]=useState('');
+  const auth = getAuth();
+  const handlegooglesignin=()=>{  
     signInWithPopup(auth, googleprovider)
       .then((result) => {
         const user = result.user;
@@ -16,8 +18,22 @@ function App() {
       })
   }
 
+const handleEmail=e=>{
+  setEmail(e.target.value)
+}
+const handlepassword=e=>{
+  setPass(e.target.value)
+}
+
   const handleRegistration=e=>{
-   console.log('Registration will be addaed');
+   console.log(email,pass);
+   createUserWithEmailAndPassword(auth, email, pass)
+   .then((result) => {
+    const user = result.user;
+    console.log(user);
+  })
+
+
    e.preventDefault();
   }
   return (
@@ -27,13 +43,13 @@ function App() {
   <div className="row mb-3">
     <label htmlFor="inputEmail3" className="col-sm-2 col-form-label">Email</label>
     <div className="col-sm-10">
-      <input type="email" className="form-control w-25" id="inputEmail3"/>
+      <input type="email" onBlur={handleEmail} className="form-control w-25" id="inputEmail3" required/>
     </div>
   </div>
   <div className="row mb-3">
     <label htmlFor="inputPassword3" className="col-sm-2 col-form-label">Password</label>
     <div className="col-sm-10">
-      <input type="password" className="form-control w-25" id="inputPassword3"/>
+      <input type="password" onBlur={handlepassword} className="form-control w-25" id="inputPassword3" required/>
     </div>
   </div>
   <div className="row mb-3">
@@ -46,7 +62,7 @@ function App() {
       </div>
     </div>
   </div>
-  <button type="submit" className="btn btn-primary">Sign in</button>
+  <button type="submit" className="btn btn-primary">Register</button>
 </form>
 
       {/* <button onClick={handlegooglesignin}>Google Signin</button> */}
